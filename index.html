@@ -1,11 +1,880 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-	<title></title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>MAIHL — MT Elite</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+<style>
+/* ================= ROOT THEME ================= */
+:root{
+    --navy:#071428;
+    --rink:#0b1117;
+    --accent:#5fd3ff;
+    --accent-2:#2aa6ff;
+    --muted:#9fb5c8;
+    --white:#eef7fb;
+    --glass: rgba(255,255,255,0.03);
+    --glass-2: rgba(255,255,255,0.02);
+    --card-radius:14px;
+    --shadow: 0 6px 20px rgba(2,8,23,0.6);
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;
+}
+
+html,body{
+    height:100%;
+    margin:0;
+    background:var(--rink);
+    color:var(--white);
+    padding-top:72px;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+}
+
+/* ================= NAV BAR ================= */
+.topnav{
+    position:fixed;top:0;left:0;right:0;
+    height:72px;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px 28px;
+    background:var(--rink);
+    box-shadow:0 6px 18px rgba(0,0,0,0.55);
+    z-index:40;
+    border-bottom:1px solid rgba(255,255,255,0.03);
+}
+
+.logo{display:flex;align-items:center;gap:14px;}
+
+.initials{display:flex;gap:8px;align-items:center;}
+
+.initial{
+    width:42px;height:42px;border-radius:10px;
+    display:grid;place-items:center;
+    font-weight:700;color:var(--navy);
+    background:linear-gradient(180deg,var(--accent),#3bb2ff);
+    font-size:13px;
+}
+
+.logo-title{font-weight:800;font-size:16px;}
+.logo-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+
+.nav-buttons{display:flex;gap:12px;}
+
+.nav-button{
+    padding:8px 14px;
+    background:rgba(255,255,255,0.02);
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,0.03);
+    font-weight:700;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.nav-button:hover{
+    background:linear-gradient(180deg,var(--accent),var(--accent-2));
+    color:var(--navy);
+}
+
+/* Home highlighted state */
+.nav-button.active{
+    background:linear-gradient(180deg,var(--accent),var(--accent-2));
+    color:var(--navy);
+}
+
+/* ================= MAIN GRID ================= */
+.container{
+    max-width:1120px;
+    margin:28px auto;
+    padding:22px;
+    display:grid;
+    grid-template-columns:1fr 380px;
+    gap:22px;
+}
+
+.panel{
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:var(--card-radius);
+    box-shadow:var(--shadow);
+    padding:18px;
+    border:1px solid rgba(255,255,255,0.03);
+}
+
+/* ================= LEADERBOARD ================= */
+.leaderboard{width:100%;border-collapse:collapse;margin-top:6px}
+.leaderboard thead th{
+    font-weight:700;text-align:left;padding:12px 10px;
+    font-size:13px;color:var(--muted);
+    border-bottom:1px dashed rgba(255,255,255,0.03)
+}
+.leaderboard tbody tr{
+    transition:transform .22s ease, background .22s ease;
+}
+.leaderboard tbody tr:hover{
+    transform:translateY(-4px);
+    background:linear-gradient(90deg, rgba(95,211,255,0.02), transparent)
+}
+.leaderboard td{padding:12px 10px;font-weight:600;font-size:15px}
+.rank{font-size:13px;color:var(--muted);width:44px}
+.stat-num{font-weight:800;font-size:16px;color:var(--white)}
+
+/* ================= PLAYER CARDS ================= */
+.players-col{display:flex;flex-direction:column;gap:16px}
+
+.player-card{
+    display:flex;gap:14px;align-items:center;
+    padding:14px;border-radius:12px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border:1px solid rgba(255,255,255,0.03);
+    transition:transform .28s, box-shadow .28s;
+    cursor:pointer;
+}
+.player-card:hover{
+    transform:translateY(-8px) scale(1.01);
+    box-shadow:0 18px 40px rgba(2,8,23,0.65)
+}
+.avatar{
+    min-width:72px;height:72px;border-radius:10px;
+    background:linear-gradient(180deg,#081329,#0b1a2b);
+    display:flex;align-items:center;justify-content:center;
+    border:1px solid rgba(255,255,255,0.04);
+}
+.initial-circle{
+    width:56px;height:56px;border-radius:50%;
+    display:grid;place-items:center;font-weight:800;
+    background:linear-gradient(180deg,var(--accent),#2aa6ff);
+    color:var(--navy);font-size:16px
+}
+
+/* ================= TICKETS ================= */
+.games-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:12px;margin-top:12px
+}
+.game-card{
+    padding:12px;border-radius:12px;
+    background:var(--glass-2);
+    border:1px solid rgba(255,255,255,0.03);
+    cursor:pointer;
+    transition:transform .18s, box-shadow .18s, background .18s;
+}
+.game-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 10px 30px rgba(2,8,23,0.45)
+}
+.game-card.active{
+    background:linear-gradient(180deg,var(--accent),var(--accent-2));
+    color:var(--navy);font-weight:800;
+    box-shadow:0 20px 40px rgba(42,166,255,0.12)
+}
+
+/* Seats */
+.seat-map{
+    display:grid;grid-template-columns:repeat(6,48px);
+    gap:8px;margin-top:12px
+}
+.seat-item{
+    height:44px;display:flex;align-items:center;justify-content:center;
+    border-radius:10px;background:var(--glass-2);
+    border:1px solid rgba(255,255,255,0.05);
+    cursor:pointer;
+}
+.seat-item:hover{transform:translateY(-4px);background:rgba(95,211,255,0.06)}
+.seat-item.taken{opacity:0.35;cursor:not-allowed}
+.seat-item.selected{background:var(--accent);color:var(--navy);font-weight:800}
+
+/* ================= PERFORMANCE ================= */
+#performance{
+    max-width:1120px;margin:60px auto;padding:26px;border-radius:12px;
+    border:1px solid rgba(255,255,255,0.03);
+    background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
+    box-shadow:var(--shadow)
+}
+.performance-grid{
+    display:flex;align-items:flex-start;justify-content:space-between;
+    gap:18px;padding:24px 0;color:var(--muted);font-size:14px;flex-wrap:wrap;
+}
+.stat-card{
+    flex:1 1 280px;min-width:220px;padding:18px;border-radius:12px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+    border:1px solid rgba(255,255,255,0.03);
+    box-shadow:0 8px 20px rgba(2,8,23,0.45);
+}
+.stat-title{font-weight:800;font-size:16px;margin-bottom:8px;}
+.stat-value{font-size:26px;font-weight:900;color:var(--white);margin-bottom:6px;}
+.stat-sub{font-size:13px;color:var(--muted)}
+
+.performance-subtitle{color:var(--muted)}
+
+/* Hot/Cold Streaks */
+.streaks{
+    display:flex;flex-direction:column;gap:12px;margin-top:12px;
+}
+.streak-item{
+    display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;
+    background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);
+}
+.streak-hot{border-left:4px solid #ff9b4a}
+.streak-cold{border-left:4px solid #4aa6ff}
+.streak-name{font-weight:800}
+.streak-meta{color:var(--muted);font-size:13px}
+
+/* Goalie section */
+.goalie-grid{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+.goalie-card{flex:1 1 220px;padding:12px;border-radius:10px;background:rgba(0,0,0,0.03);
+    border:1px solid rgba(255,255,255,0.03);}
+.goalie-title{font-weight:800;margin-bottom:6px;font-size:15px}
+
+/* mini canvas sizing */
+.trend-canvas{width:100%;height:70px;border-radius:8px;background:transparent;display:block}
+
+/* Floating action button (3-dot) */
+.fab-menu{
+    position:fixed;
+    bottom:28px;
+    right:28px;
+    z-index:200;
+}
+.fab-dots{
+    width:58px;
+    height:58px;
+    background:var(--accent);
+    color:var(--navy);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    font-size:34px;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 12px 30px rgba(0,0,0,0.5);
+    transition:0.2s;
+}
+.fab-dots:hover{ transform:scale(1.07); }
+.fab-options{
+    position:absolute;
+    bottom:70px;
+    right:0;
+    display:none;
+    flex-direction:column;
+    gap:10px;
+}
+.fab-option{
+    padding:12px 16px;
+    background:rgba(255,255,255,0.06);
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,0.05);
+    cursor:pointer;
+    font-weight:700;
+    transition:0.2s;
+}
+.fab-option:hover{
+    background:var(--accent);
+    color:var(--navy);
+}
+
+/* ================= NEWS FEED ================= */
+.news-panel{
+    padding:22px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:var(--card-radius);
+    border:1px solid rgba(255,255,255,0.03);
+    box-shadow:var(--shadow);
+    margin-top:32px;
+}
+.news-title{
+    font-weight:800;
+    font-size:18px;
+    margin-bottom:14px;
+    color:var(--white);
+}
+.news-list{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+.news-item{
+    padding:12px 14px 12px 18px;
+    border-radius:12px;
+    background:rgba(255,255,255,0.02);
+    border:1px solid rgba(255,255,255,0.04);
+    font-size:14px;
+    line-height:1.45;
+    color:var(--muted);
+    position:relative;
+    transition:0.25s ease;
+}
+.news-item::before{
+    content:"";
+    width:6px;
+    height:100%;
+    background:linear-gradient(180deg, var(--accent), var(--accent-2));
+    position:absolute;
+    left:0;
+    top:0;
+    border-radius:12px 0 0 12px;
+    opacity:0.65;
+}
+.news-item:hover{
+    transform:translateY(-6px);
+    background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.03));
+    box-shadow:0 14px 30px rgba(0,0,0,0.45);
+    color:var(--white);
+}
+
+/* Responsive */
+@media (max-width:980px){
+    .container{grid-template-columns:1fr;padding:12px}
+    .players-col{order:2}
+    .performance-grid{flex-direction:column;align-items:stretch}
+    .news-panel{margin:18px 12px}
+}
+</style>
 </head>
+
 <body>
-	<div style="position:relative;height:0;padding-bottom:117.6%;overflow:hidden;">
-		<iframe allowfullscreen="allowfullscreen" frameborder="0" sandbox="allow-popups allow-forms allow-scripts allow-same-origin" src="https://arcade.makecode.com/---run?id=_EzpWkXe7fAT0" style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
-	</div>
+
+<!-- ================= NAVIGATION ================= -->
+<nav class="topnav" role="navigation" aria-label="Main">
+    <div class="logo">
+        <div class="initials">
+            <div class="initial">MT</div>
+            <div class="initial">AK</div>
+            <div class="initial">IK</div>
+        </div>
+        <div class="brand">
+            <div class="logo-title">HockeyStats Pro</div>
+            <div class="logo-sub">Muhummud · Ahmed · Ismail</div>
+        </div>
+    </div>
+
+    <div class="nav-buttons" role="menubar">
+        <div class="nav-button active" role="menuitem">Home</div>
+        <div class="nav-button" role="menuitem">Tickets</div>
+        <div class="nav-button" role="menuitem">Live Games</div>
+        <div class="nav-button" role="menuitem">Calendars</div>
+        <div class="nav-button" role="menuitem">All Time Stats</div>
+    </div>
+</nav>
+
+<!-- ================= MAIN CONTENT ================= -->
+<main class="container" id="app">
+
+<section class="panel" aria-labelledby="leaderboard-title">
+    <h1 id="leaderboard-title" class="page-title" style="margin:0 0 6px 0;font-size:18px">Top Players — Leaderboard</h1>
+    <p class="lead" style="color:var(--muted);margin:6px 0 12px 0">Live-style leaderboard showcasing rank, goals, wins & losses.</p>
+
+    <table class="leaderboard" aria-describedby="leaderboard-desc">
+        <thead>
+            <tr><th></th><th>Player</th><th>Goals</th><th>Wins</th><th>Losses</th></tr>
+        </thead>
+
+        <tbody id="leaderboard-body">
+            <tr><td class="rank">1</td><td><strong>Muhummud Teli</strong><div style="font-size:12px;color:var(--muted)">#88</div></td><td class="stat-num">0</td><td class="stat-num">0</td><td class="stat-num">0</td></tr>
+            <tr><td class="rank">2</td><td><strong>Ahmed Kasujee</strong><div style="font-size:12px;color:var(--muted)">#21</div></td><td class="stat-num">0</td><td class="stat-num">0</td><td class="stat-num">0</td></tr>
+            <tr><td class="rank">3</td><td><strong>Ismail Kayka</strong><div style="font-size:12px;color:var(--muted)">#23</div></td><td class="stat-num">0</td><td class="stat-num">0</td><td class="stat-num">0</td></tr>
+            <tr><td class="rank">4</td><td><strong>Husaifa Khotwa</strong><div style="font-size:12px;color:var(--muted)">#12</div></td><td class="stat-num">0</td><td class="stat-num">0</td><td class="stat-num">0</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<aside class="players-col" aria-label="Players">
+    <article class="panel player-card" data-player="MT" tabindex="0">
+        <div class="avatar" aria-hidden="true"><div class="initial-circle">MT</div></div>
+        <div>
+            <h3 style="margin:0">Muhummud Teli • #88</h3>
+            <div style="font-size:13px;color:var(--muted)">Forward • 5’11” • Right</div>
+        </div>
+    </article>
+
+    <article class="panel player-card" data-player="AK" tabindex="0">
+        <div class="avatar" aria-hidden="true"><div class="initial-circle">AK</div></div>
+        <div>
+            <h3 style="margin:0">Ahmed Kasujee • #21</h3>
+            <div style="font-size:13px;color:var(--muted)">Forward • 6’0” • Left</div>
+        </div>
+    </article>
+
+    <article class="panel player-card" data-player="IK" tabindex="0">
+        <div class="avatar" aria-hidden="true"><div class="initial-circle">IK</div></div>
+        <div>
+            <h3 style="margin:0">Ismail Kayka • #23</h3>
+            <div style="font-size:13px;color:var(--muted)">Forward • 6’1” • Right</div>
+        </div>
+    </article>
+
+    <article class="panel player-card" data-player="HK" tabindex="0">
+        <div class="avatar" aria-hidden="true"><div class="initial-circle">HK</div></div>
+        <div>
+            <h3 style="margin:0">Husaifa Khotwa • #12</h3>
+            <div style="font-size:13px;color:var(--muted)">Defense • 6’2” • Right</div>
+        </div>
+    </article>
+</aside>
+
+</main>
+
+<!-- ================= PERFORMANCE SECTION ================= -->
+<section id="performance" class="panel" aria-labelledby="perf-title">
+    <h1 id="perf-title" class="page-title" style="margin:0 0 6px 0;font-size:18px">MAIHL Performance</h1>
+    <p class="lead performance-subtitle" style="color:var(--muted);margin:6px 0 12px 0">Advanced MAIHL Stats - <strong>[Powered By MEllite Nation]</strong></p>
+
+    <div class="performance-grid" id="performanceGrid">
+
+        <div class="stat-card">
+            <div class="stat-title">Most Saves</div>
+            <div class="stat-value" id="mostSaves">0</div>
+            <div class="stat-sub" id="mostSavesPlayer">—</div>
+            <canvas class="trend-canvas" id="savesTrend" aria-label="Saves trend"></canvas>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-title">Most Shots</div>
+            <div class="stat-value" id="mostShots">0</div>
+            <div class="stat-sub" id="mostShotsPlayer">—</div>
+            <canvas class="trend-canvas" id="shotsTrend" aria-label="Shots trend"></canvas>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-title">Best Goal Differential</div>
+            <div class="stat-value" id="bestGD">0</div>
+            <div class="stat-sub" id="bestGDPlayer">—</div>
+        </div>
+
+        <div class="stat-card" style="flex-basis:100%;">
+            <div class="stat-title">Top 5 — Quick Snapshot</div>
+
+            <div style="display:flex;gap:12px;margin-top:10px;flex-wrap:wrap;">
+
+                <div style="flex:1 1 160px;background:rgba(0,0,0,0.03);padding:10px;border-radius:8px;">
+                    <strong>Muhummud Teli</strong>
+                    <div style="font-size:13px;color:var(--muted)">Goals: 0 • Shots: 0</div>
+                </div>
+
+                <div style="flex:1 1 160px;background:rgba(0,0,0,0.03);padding:10px;border-radius:8px;">
+                    <strong>Ahmed Kasujee</strong>
+                    <div style="font-size:13px;color:var(--muted)">Goals: 0 • Shots: 0</div>
+                </div>
+
+                <div style="flex:1 1 160px;background:rgba(0,0,0,0.03);padding:10px;border-radius:8px;">
+                    <strong>Ismail Kayka</strong>
+                    <div style="font-size:13px;color:var(--muted)">Goals: 0 • Shots: 0</div>
+                </div>
+
+                <div style="flex:1 1 160px;background:rgba(0,0,0,0.03);padding:10px;border-radius:8px;">
+                    <strong>Husaifa Khotwa</strong>
+                    <div style="font-size:13px;color:var(--muted)">Goals: 0 • Shots: 0</div>
+                </div>
+
+                <div style="flex:1 1 160px;background:rgba(0,0,0,0.03);padding:10px;border-radius:8px;">
+                    <strong>USER04</strong>
+                    <div style="font-size:13px;color:var(--muted)">Goals: 0 • Shots: 0</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Hot / Cold Streak Module -->
+        <div class="stat-card" style="flex-basis:320px;">
+            <div class="stat-title">Hot / Cold Streaks</div>
+            <div class="streaks" id="streaksList">
+                <!-- JS will populate -->
+            </div>
+        </div>
+
+        <!-- Goalie Performance Section -->
+        <div class="stat-card" style="flex-basis:100%;">
+            <div class="stat-title">Goalie Performance</div>
+            <div class="goalie-grid" id="goalieGrid">
+                <!-- goalie cards -->
+                <div class="goalie-card">
+                    <div class="goalie-title">MT — Starting Goalie</div>
+                    <div style="font-size:22px;font-weight:900" id="mtSavePct">.000</div>
+                    <div style="font-size:13px;color:var(--muted)">Save %</div>
+                    <div style="margin-top:8px;font-size:13px;color:var(--muted)">GAA: <span id="mtGAA">0.00</span> • High-danger saves: <span id="mtHDS">0</span></div>
+                </div>
+
+                <div class="goalie-card">
+                    <div class="goalie-title">AK — Backup Goalie</div>
+                    <div style="font-size:22px;font-weight:900" id="akSavePct">.000</div>
+                    <div style="font-size:13px;color:var(--muted)">Save %</div>
+                    <div style="margin-top:8px;font-size:13px;color:var(--muted)">GAA: <span id="akGAA">0.00</span> • High-danger saves: <span id="akHDS">0</span></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ================= NEWS FEED ================= -->
+<section class="panel news-panel" aria-labelledby="news-title" style="max-width:1120px;margin:32px auto;">
+    <div id="news-title" class="news-title">MAIHL News Feed</div>
+
+    <div class="news-list" id="newsList">
+        <!-- JS will populate -->
+    </div>
+</section>
+
+<!-- ================= TICKETS SECTION ================= -->
+<section id="tickets">
+<div class="panel" style="padding:24px;max-width:1120px;margin:0 auto;">
+
+    <h1 class="page-title" style="margin:0 0 6px 0;font-size:18px">
+        Tickets <small style="color:var(--muted);font-size:14px;">[Sponsored By MT Elite]</small>
+    </h1>
+
+    <p class="lead" style="color:var(--muted);margin:6px 0 12px 0">Select a game, choose your seat, and claim your ticket below.</p>
+
+    <h2 style="margin-top:20px;font-weight:700;">Choose a Game</h2>
+    <div class="games-grid" id="gamesGrid" role="list"></div>
+
+    <div style="display:flex;gap:12px;align-items:center;margin-top:16px;flex-wrap:wrap;">
+        <div id="selectedGameBadge"
+            style="padding:10px 14px;background:rgba(255,255,255,0.02);
+            border-radius:10px;border:1px solid rgba(255,255,255,0.03);">
+            No game selected
+        </div>
+    </div>
+
+    <h2 style="margin-top:18px;font-weight:700;">Available Seats</h2>
+    <p style="color:var(--muted);font-size:13px;margin-top:-6px;">
+        Tap a seat to select — taken seats are disabled.
+    </p>
+
+    <div class="seat-map" id="seatMap" aria-live="polite"></div>
+
+    <div style="display:flex;gap:12px;align-items:center;margin-top:12px;">
+        <button id="claimBtn"
+            style="padding:14px 18px;background:var(--accent);
+            color:var(--navy);border:none;border-radius:12px;font-weight:800;
+            font-size:16px;cursor:pointer;">
+            Claim Your Ticket
+        </button>
+
+        <div style="color:var(--muted);font-size:13px;">
+            (Requires selected game + seat)
+        </div>
+    </div>
+
+    <div class="ticket-summary"
+        style="margin-top:16px;padding:12px;border:1px solid rgba(255,255,255,0.03);
+        border-radius:10px;background:rgba(255,255,255,0.02);">
+
+        <strong>Ticket Info</strong>
+        <div id="ticketInfo" style="margin-top:8px;color:var(--muted);">No ticket claimed yet.</div>
+    </div>
+
+</div>
+</section>
+
+<!-- ================= FLOATING 3-DOT MENU ================= -->
+<div class="fab-menu" aria-hidden="false">
+    <div class="fab-dots" id="fabToggle" tabindex="0" role="button" aria-label="Open menu">⋮</div>
+
+    <div class="fab-options" id="fabOptions" role="menu">
+        <div class="fab-option" id="fabNews" role="menuitem">News</div>
+        <div class="fab-option" id="fabAccount" role="menuitem">Account</div>
+    </div>
+</div>
+
+<!-- ================= SCRIPTS ================= -->
+<script>
+/* ======================================================
+   Full interactive script — all logic in one place.
+   Uses your original content and improves event handling,
+   canvas sizing (retina-aware), and dynamic population.
+   ====================================================== */
+
+// ------------------------------
+// DATA (example / static — replace with real API later)
+// ------------------------------
+const games = [
+    { id: 1, name: "MAIHL — MT vs AK", date: "Dec 18, 2025", taken: [3,8,15] },
+    { id: 2, name: "MAIHL — IK vs HK", date: "Dec 20, 2025", taken: [1,2,9,22] },
+    { id: 3, name: "MAIHL — MT vs IK", date: "Dec 23, 2025", taken: [7,12,24] },
+    { id: 4, name: "MAIHL — AK vs HK", date: "Dec 26, 2025", taken: [6,10] }
+];
+
+const newsSeed = [
+    { text: "Ismail Kayka is still awaiting his season debut after a lingering foot injury.", time: "2h" },
+    { text: "Muhummud Teli has hit a cold streak over the last stretch — coaches say they're reviewing adjustments.", time: "4h" },
+    { text: "Ahmed Kasujee scores another highlight-reel goal, roofing it top-corner with unbelievable accuracy.", time: "1d" },
+    { text: "MAIHL announces a major expansion wave as a new ownership group invests over $39B into the league.", time: "2d" },
+    { text: "The complete MAIHL rulebook has been finalized, resolving all previous inconsistencies for the 2025 season.", time: "3d" }
+];
+
+const players = [
+    { id: "MT", name: "Muhummud Teli", jersey: "#88", pos: "Forward" },
+    { id: "AK", name: "Ahmed Kasujee", jersey: "#21", pos: "Forward" },
+    { id: "IK", name: "Ismail Kayka", jersey: "#23", pos: "Forward" },
+    { id: "HK", name: "Husaifa Khotwa", jersey: "#12", pos: "Defense" }
+];
+
+let selectedGame = null;
+let selectedSeat = null;
+
+// ------------------------------
+// DOM refs
+// ------------------------------
+const gamesGrid = document.getElementById("gamesGrid");
+const seatMap = document.getElementById("seatMap");
+const ticketInfo = document.getElementById("ticketInfo");
+const selectedGameBadge = document.getElementById("selectedGameBadge");
+const newsList = document.getElementById("newsList");
+
+// ------------------------------
+// Render games
+// ------------------------------
+function renderGames() {
+    gamesGrid.innerHTML = "";
+    games.forEach((g, idx) => {
+        const card = document.createElement("div");
+        card.className = "game-card";
+        card.tabIndex = 0;
+        card.setAttribute("role", "button");
+        card.innerHTML = `<div style="font-weight:800">${g.name}</div><div style="font-size:13px;color:var(--muted);margin-top:6px">${g.date}</div>`;
+        card.addEventListener('click', () => selectGameByIndex(idx));
+        card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') selectGameByIndex(idx); });
+        gamesGrid.appendChild(card);
+    });
+}
+
+// robust game selection using index
+function selectGameByIndex(idx) {
+    const cards = [...gamesGrid.children];
+    cards.forEach(c => c.classList.remove('active'));
+    const card = cards[idx];
+    if (card) card.classList.add('active');
+
+    selectedGame = games[idx];
+    selectedSeat = null;
+    selectedGameBadge.textContent = `${selectedGame.name} (${selectedGame.date})`;
+    renderSeats(selectedGame);
+}
+
+// ------------------------------
+// Render seats
+// ------------------------------
+function renderSeats(game) {
+    seatMap.innerHTML = "";
+    for (let i = 1; i <= 30; i++) {
+        const seat = document.createElement("div");
+        seat.className = "seat-item";
+        seat.textContent = i;
+        if (game.taken.includes(i)) {
+            seat.classList.add("taken");
+            seat.setAttribute('aria-disabled', 'true');
+        } else {
+            seat.tabIndex = 0;
+            seat.addEventListener('click', () => selectSeat(seat, i));
+            seat.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') selectSeat(seat, i); });
+        }
+        seatMap.appendChild(seat);
+    }
+}
+
+function selectSeat(el, num) {
+    if (!selectedGame) return;
+    selectedSeat = num;
+    [...seatMap.children].forEach(s => s.classList.remove("selected"));
+    el.classList.add("selected");
+}
+
+// ------------------------------
+// Generate ticket
+// ------------------------------
+function generateTicket() {
+    if (!selectedGame || !selectedSeat) {
+        ticketInfo.innerHTML = `<span style="color:#ff6b6b">Error:</span> choose a game + seat.`;
+        return;
+    }
+    ticketInfo.innerHTML = `
+        <strong>Game:</strong> ${selectedGame.name}<br>
+        <strong>Date:</strong> ${selectedGame.date}<br>
+        <strong>Seat:</strong> #${selectedSeat}<br>
+        <span style="color:var(--accent);font-weight:700;">Ticket successfully claimed!</span>
+    `;
+    // mark seat as taken in data model to prevent double-claim
+    selectedGame.taken.push(selectedSeat);
+    renderSeats(selectedGame);
+}
+
+// ------------------------------
+// FAB menu
+// ------------------------------
+const fabToggle = document.getElementById("fabToggle");
+const fabOptions = document.getElementById("fabOptions");
+
+fabToggle.addEventListener('click', () => {
+    fabOptions.style.display = fabOptions.style.display === "flex" ? "none" : "flex";
+});
+fabToggle.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); fabToggle.click(); }
+});
+document.getElementById("fabNews").addEventListener('click', () => window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" }));
+document.getElementById("fabAccount").addEventListener('click', () => alert("Account system coming soon!"));
+
+// close FAB if clicking outside
+document.addEventListener('click', (e) => {
+    const fab = document.querySelector('.fab-menu');
+    if (!fab) return;
+    if (!fab.contains(e.target)) fabOptions.style.display = 'none';
+});
+
+// ------------------------------
+// News feed (populated from seed; can wire to API)
+// ------------------------------
+function renderNews(items = []) {
+    newsList.innerHTML = "";
+    items.forEach(it => {
+        const node = document.createElement('div');
+        node.className = 'news-item';
+        node.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><div>${it.text}</div><div style="font-size:12px;color:var(--muted);margin-left:12px">${it.time}</div></div>`;
+        newsList.appendChild(node);
+    });
+}
+renderNews(newsSeed);
+
+// ------------------------------
+// Trends: canvas helpers (retina-aware)
+// ------------------------------
+function sizeCanvas(canvas) {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // reset scale
+}
+
+function drawLine(canvas, values, strokeColor) {
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width / (window.devicePixelRatio || 1);
+    const H = canvas.height / (window.devicePixelRatio || 1);
+    ctx.clearRect(0, 0, W, H);
+
+    const maxV = Math.max(...values, 1);
+    const stepX = W / (values.length - 1);
+
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = strokeColor;
+    ctx.beginPath();
+    values.forEach((v, i) => {
+        const x = i * stepX;
+        const y = H - (v / maxV) * H;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Optional: small circle at last point
+    const lastX = (values.length - 1) * stepX;
+    const lastY = H - (values[values.length - 1] / maxV) * H;
+    ctx.fillStyle = strokeColor;
+    ctx.beginPath();
+    ctx.arc(lastX, lastY, 3, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function redrawTrends() {
+    const shots = [2,4,5,3,6,4];
+    const saves = [8,10,7,9,11,12];
+
+    const shotsCanvas = document.getElementById('shotsTrend');
+    const savesCanvas = document.getElementById('savesTrend');
+
+    if (shotsCanvas) { sizeCanvas(shotsCanvas); drawLine(shotsCanvas, shots, getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#5fd3ff'); }
+    if (savesCanvas) { sizeCanvas(savesCanvas); drawLine(savesCanvas, saves, getComputedStyle(document.documentElement).getPropertyValue('--accent-2').trim() || '#2aa6ff'); }
+}
+
+// initial draw + resize debounce
+redrawTrends();
+window.addEventListener('resize', () => { clearTimeout(window.__trendResizeTimer); window.__trendResizeTimer = setTimeout(redrawTrends, 120); });
+
+// ------------------------------
+// Streaks generator
+// ------------------------------
+function generateStreaks() {
+    const playersData = [
+        { name: "Muhummud Teli", goals: 0 },
+        { name: "Ahmed Kasujee", goals: 4 },
+        { name: "Ismail Kayka", goals: 1 },
+        { name: "Husaifa Khotwa", goals: 2 }
+    ];
+    const streaksDiv = document.getElementById("streaksList");
+    streaksDiv.innerHTML = "";
+    playersData.forEach(p => {
+        const isHot = p.goals >= 2;
+        const div = document.createElement("div");
+        div.className = "streak-item " + (isHot ? "streak-hot" : "streak-cold");
+        div.innerHTML = `
+            <div>
+                <div class="streak-name">${p.name}</div>
+                <div class="streak-meta">${isHot ? `Hot — ${p.goals} goals in last few games` : `Cold — ${p.goals} goals recently`}</div>
+            </div>
+            <div style="font-weight:900;color:${isHot ? "var(--accent)" : "var(--muted)"}">
+                ${p.goals}
+            </div>`;
+        streaksDiv.appendChild(div);
+    });
+}
+generateStreaks();
+
+// ------------------------------
+// Goalie stats (example reactive function)
+// ------------------------------
+function updateGoalieStatsLive(data) {
+    const MT = data.MT;
+    const AK = data.AK;
+    const calcSP = g => g.shotsAgainst === 0 ? ".000" : (g.saves / g.shotsAgainst).toFixed(3);
+    const calcGAA = g => g.shotsAgainst === 0 ? "0.00" : (g.goalsAllowed / Math.max(1, g.shotsAgainst / 30)).toFixed(2);
+
+    document.getElementById("mtSavePct").textContent = calcSP(MT);
+    document.getElementById("akSavePct").textContent = calcSP(AK);
+
+    document.getElementById("mtGAA").textContent = calcGAA(MT);
+    document.getElementById("akGAA").textContent = calcGAA(AK);
+
+    document.getElementById("mtHDS").textContent = MT.highDanger;
+    document.getElementById("akHDS").textContent = AK.highDanger;
+}
+
+// feed sample goalie data
+updateGoalieStatsLive({
+    MT: { saves: 112, shotsAgainst: 125, goalsAllowed: 13, highDanger: 34 },
+    AK: { saves: 58, shotsAgainst: 67, goalsAllowed: 9, highDanger: 12 }
+});
+
+// ------------------------------
+// Initialization & wiring
+// ------------------------------
+function init() {
+    renderGames();
+    // ensure a default selection
+    if (gamesGrid.children.length) {
+        gamesGrid.children[0].click();
+    }
+    // hook claim button
+    const claimBtn = document.getElementById('claimBtn');
+    if (claimBtn) claimBtn.addEventListener('click', generateTicket);
+
+    // render news with timestamps (already done above)
+    renderNews(newsSeed);
+
+    // accessibility: ensure player cards keyboard focus triggers hover styles (visual only)
+    document.querySelectorAll('.player-card').forEach(pc => {
+        pc.addEventListener('keypress', (e) => { if (e.key === 'Enter') pc.click(); });
+    });
+}
+
+init();
+
+</script>
+
 </body>
 </html>
